@@ -1,6 +1,7 @@
-// main.dart
 import 'package:flutter/material.dart';
-// import 'package:flutter_application_2/feed/presentation/widgets/widget.dart';
+import 'package:flutter_application_2/pages/first_page.dart';
+import 'package:flutter_application_2/pages/second_page.dart';
+import 'package:flutter_application_2/pages/third_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,80 +13,58 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo 1234567890',
+      title: 'Занятие 3',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color.fromARGB(255, 183, 177, 58),
         ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+class MainPage extends StatefulWidget {
+  const MainPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<StatefulWidget> createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainPageState extends State<MainPage> {
+  int _current_screen = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+  final List<Widget> _pages = [
+    const FirstPage(),
+    const SecondPage(),
+    const ThirdPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // const Text('You have pushed the button this many times:'),
-            // Text(
-            //   '$_counter',
-            //   style: Theme.of(context).textTheme.headlineMedium,
-            // ),
-            // CoolText(text: 'qwerty'),
-            // CoolText(text: '12343545'),
-            // CoolText(text: '14254524'),
-            // GreatText(),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class CoolText extends StatelessWidget {
-  final String text;
-
-  CoolText({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontSize: 48,
-        color: Colors.amber,
-        fontWeight: FontWeight.w700,
+      body: _pages[_current_screen],
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.looks_one_rounded),
+            label: "Первый",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.looks_two_rounded),
+            label: "Второй",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.three_g_mobiledata),
+            label: "Третий",
+          ),
+        ],
+        currentIndex: _current_screen,
+        onTap: (value) {
+          setState(() {
+            _current_screen = value;
+          });
+        },
       ),
     );
   }
