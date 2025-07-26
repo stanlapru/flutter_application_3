@@ -8,6 +8,7 @@ import 'package:flutter_application_2/pages/main/second_page.dart';
 import 'package:flutter_application_2/pages/auth/sign_in_page.dart';
 import 'package:flutter_application_2/pages/main/third_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:flutter_application_2/widgets/dialogs.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 9, 255, 0),
         ),
       ),
-      darkTheme: ThemeData.dark(),
+      darkTheme: ThemeData(brightness: Brightness.dark),
       themeMode: ThemeMode.system,
       home: const MainPage(),
     );
@@ -132,6 +133,12 @@ class _MainPageState extends State<MainPage> {
                         icon: const Icon(Icons.exit_to_app_rounded),
                         onPressed: () async {
                           await AuthService.signOut();
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.info_outline_rounded),
+                        onPressed: () async {
+                          showDialogInfo(context, "Информация", "Привет всем");
                         },
                       ),
                     ],
