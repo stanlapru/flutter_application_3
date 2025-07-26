@@ -19,4 +19,8 @@ class FirestoreService {
   static Stream<QuerySnapshot> getNews() {
     return _db.collection('news').orderBy('createdAt', descending: true).snapshots();
   }
+
+  static Future<void> deleteNews(String docId) async {
+    await _db.collection('news').doc(docId).delete();
+  }
 }

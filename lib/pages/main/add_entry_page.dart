@@ -16,6 +16,7 @@ class AddEntryPage extends StatefulWidget {
 class _AddEntryPageState extends State<AddEntryPage> {
   final _titleController = TextEditingController();
   final _summaryController = TextEditingController();
+  final _linkController = TextEditingController();
   final _bodyController = TextEditingController();
   bool _isLoading = false;
 
@@ -32,6 +33,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
         'title': _titleController.text,
         'summary': _summaryController.text,
         'body': _bodyController.text,
+        'link': _linkController.text,
         'createdAt': FieldValue.serverTimestamp(),
         'userId': AuthService.currentUser?.uid,
       });
@@ -54,6 +56,7 @@ class _AddEntryPageState extends State<AddEntryPage> {
           children: [
             TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'Заголовок')),
             TextField(controller: _summaryController, decoration: const InputDecoration(labelText: 'Описание')),
+            TextField(controller: _linkController, decoration: const InputDecoration(labelText: 'Ссылка на картинку')),
             TextField(controller: _bodyController, decoration: const InputDecoration(labelText: 'Полное содержание'), maxLines: 10),
             const SizedBox(height: 16),
             _isLoading
