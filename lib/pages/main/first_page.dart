@@ -74,11 +74,12 @@ class FeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color.fromARGB(255, 206, 206, 206),
+      color:  Theme.of(context).colorScheme.onSurface.withAlpha(32),
+      shadowColor: Colors.transparent,
       child: InkWell(
         onLongPress: () {
           showModalBottomSheet(context: context, builder: (context) {
-            return NewsBottomSheet(id: id,);
+            return NewsBottomSheet(id: id, text: '$title - $text');
           });
         },
         onTap: () {

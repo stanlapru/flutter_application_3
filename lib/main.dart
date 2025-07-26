@@ -28,6 +28,8 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 9, 255, 0),
         ),
       ),
+      darkTheme: ThemeData.dark(),
+      themeMode: ThemeMode.system,
       home: const MainPage(),
     );
   }

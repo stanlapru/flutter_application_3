@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/services/firestore_service.dart';
+import 'package:share_plus/share_plus.dart';
 
 class NewsBottomSheet extends StatefulWidget {
   final String id;
+  final String text;
 
-  const NewsBottomSheet({super.key, required this.id});
+  const NewsBottomSheet({super.key, required this.id, required this.text});
 
   @override
   State<StatefulWidget> createState() => _NewsBottomSheetState();
@@ -46,6 +48,22 @@ class _NewsBottomSheetState extends State<NewsBottomSheet> {
                   },
                   icon: Icon(Icons.delete_forever_rounded),
                   label: Text('Удалить'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    try {
+                      Share.share(widget.text);
+                      // SharePlus.instance.share(ShareParams(text: widget.text));
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Не удалось поделиться новостью'),
+                        ),
+                      );
+                    }
+                  },
+                  icon: Icon(Icons.share),
+                  label: Text('Поделиться'),
                 ),
               ],
             ),
