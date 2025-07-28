@@ -2,19 +2,60 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:flutter_application_2/pages/main/first_page.dart';
 import 'package:flutter_application_2/pages/main/second_page.dart';
 import 'package:flutter_application_2/pages/auth/sign_in_page.dart';
 import 'package:flutter_application_2/pages/main/third_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
+import 'package:flutter_application_2/theme/color_schemes.dart';
+import 'package:flutter_application_2/theme/theme_notifier.dart';
 import 'package:flutter_application_2/widgets/dialogs.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  await initializePreferences();
+  final theme = await getTheme();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create:
+              (_) => ThemeNotifier(
+                lightTheme: createLightColorData(),
+                darkTheme: createDarkColorData(),
+                initialTheme: theme,
+              ),
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
+}
+
+Future<void> initializePreferences() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
+
+  if (isFirstLaunch) {
+    final brightness =
+        SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    await prefs.setString(
+      'theme',
+      brightness == Brightness.dark ? 'dark' : 'light',
+    );
+  }
+}
+
+Future<String> getTheme() async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? theme = prefs.getString('theme') ?? 'dark';
+  return theme;
 }
 
 class MyApp extends StatelessWidget {
@@ -22,15 +63,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      final themeNotifier = Provider.of<ThemeNotifier>(context);
+
     return MaterialApp(
-      title: 'Занятие 3',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 9, 255, 0),
-        ),
-      ),
-      darkTheme: ThemeData(brightness: Brightness.dark),
-      themeMode: ThemeMode.system,
+      title: 'Занятие 7',
+      theme: themeNotifier.lightTheme,
+      darkTheme: themeNotifier.darkTheme,
+      themeMode: themeNotifier.themeMode,
       home: const MainPage(),
     );
   }
