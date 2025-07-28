@@ -18,6 +18,7 @@ class ThemeNotifier extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
 
     _mode = theme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+    print('theme mode: $_mode');
 
     await prefs.setString('theme', theme);
     notifyListeners();

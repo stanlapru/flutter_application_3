@@ -4,10 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_application_2/firebase_options.dart';
+import 'package:flutter_application_2/pages/detail_page.dart';
 import 'package:flutter_application_2/pages/main/first_page.dart';
 import 'package:flutter_application_2/pages/main/second_page.dart';
 import 'package:flutter_application_2/pages/auth/sign_in_page.dart';
 import 'package:flutter_application_2/pages/main/third_page.dart';
+import 'package:flutter_application_2/pages/settings_page.dart';
 import 'package:flutter_application_2/services/auth_service.dart';
 import 'package:flutter_application_2/theme/color_schemes.dart';
 import 'package:flutter_application_2/theme/theme_notifier.dart';
@@ -21,6 +23,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await initializePreferences();
   final theme = await getTheme();
+  print(theme);
   runApp(
     MultiProvider(
       providers: [
@@ -43,18 +46,22 @@ Future<void> initializePreferences() async {
   bool isFirstLaunch = prefs.getBool('firstLaunch') ?? true;
 
   if (isFirstLaunch) {
+    print('this is first launch!');
     final brightness =
         SchedulerBinding.instance.platformDispatcher.platformBrightness;
     await prefs.setString(
       'theme',
       brightness == Brightness.dark ? 'dark' : 'light',
     );
+    print('set brightness to ${prefs.getString('theme')}');
+    await prefs.setBool('firstLaunch', false);
   }
 }
 
 Future<String> getTheme() async {
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String? theme = prefs.getString('theme') ?? 'dark';
+  print('got theme: $theme');
   return theme;
 }
 
@@ -63,7 +70,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-      final themeNotifier = Provider.of<ThemeNotifier>(context);
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
+    print('current thememode: ${themeNotifier.themeMode}');
 
     return MaterialApp(
       title: 'Занятие 7',
@@ -88,7 +96,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const FirstPage(),
     const SecondPage(),
-    const ThirdPage(),
+    const SettingsPage(),
   ];
 
   bool get isDesktop =>
@@ -131,16 +139,16 @@ class _MainPageState extends State<MainPage> {
                       NavigationRail(
                         destinations: const [
                           NavigationRailDestination(
-                            icon: Icon(Icons.looks_one_rounded),
-                            label: Text("Первый"),
+                            icon: Icon(Icons.feed_rounded),
+                            label: Text("Лента"),
                           ),
                           NavigationRailDestination(
                             icon: Icon(Icons.looks_two_rounded),
                             label: Text("Второй"),
                           ),
                           NavigationRailDestination(
-                            icon: Icon(Icons.three_g_mobiledata),
-                            label: Text("Третий"),
+                            icon: Icon(Icons.settings),
+                            label: Text("Настройки"),
                           ),
                         ],
                         labelType: NavigationRailLabelType.all,
@@ -182,20 +190,56 @@ class _MainPageState extends State<MainPage> {
                       ),
                     ],
                   ),
+                  drawer: Drawer(
+                    child: ListView(
+                      children: [
+                        DrawerHeader(child: Text('Приложение')),
+                        ListTile(
+                          leading: Icon(Icons.info),
+                          title: Text('Info'),
+                          onTap: () {
+                            showDialogInfo(
+                              context,
+                              "Информация",
+                              "Привет всем",
+                            );
+                          },
+                        ),
+                        ListTile(
+                          leading: Icon(Icons.newspaper),
+                          title: Text('Новость'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => DetailPage(
+                                      title: 'title',
+                                      text: 'text',
+                                      text2: 'text2',
+                                      color: Colors.amber,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                   body: _pages[_current_screen],
                   bottomNavigationBar: BottomNavigationBar(
                     items: [
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.looks_one_rounded),
-                        label: "Первый",
+                        icon: Icon(Icons.feed),
+                        label: "Лента",
                       ),
                       BottomNavigationBarItem(
                         icon: Icon(Icons.looks_two_rounded),
                         label: "Второй",
                       ),
                       BottomNavigationBarItem(
-                        icon: Icon(Icons.three_g_mobiledata),
-                        label: "Третий",
+                        icon: Icon(Icons.settings),
+                        label: "Настройки",
                       ),
                     ],
                     currentIndex: _current_screen,
