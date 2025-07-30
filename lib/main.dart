@@ -194,6 +194,11 @@ class _MainPageState extends State<MainPage> {
                     child: ListView(
                       children: [
                         DrawerHeader(child: Text('Приложение')),
+                        Image.asset(
+                          'assets/image1.jpg',
+                          height: 100,
+                          fit: BoxFit.contain
+                        ),
                         ListTile(
                           leading: Icon(Icons.info),
                           title: Text('Info'),

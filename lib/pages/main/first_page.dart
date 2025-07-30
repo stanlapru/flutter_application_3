@@ -33,19 +33,24 @@ class FirstPage extends StatelessWidget {
 
           final docs = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              final data = docs[index].data() as Map<String, dynamic>;
-              return FeedCard(
-                // date: (data['createdAt'] as Timestamp).toDate().toString(),
-                title: data['title'],
-                text: data['summary'],
-                text2: data['body'],
-                link: data['link'] ?? '',
-                id: docs[index].id
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              FirestoreService.getNews();
             },
+            child: ListView.builder(
+              itemCount: docs.length,
+              itemBuilder: (context, index) {
+                final data = docs[index].data() as Map<String, dynamic>;
+                return FeedCard(
+                  // date: (data['createdAt'] as Timestamp).toDate().toString(),
+                  title: data['title'],
+                  text: data['summary'],
+                  text2: data['body'],
+                  link: data['link'] ?? '',
+                  id: docs[index].id,
+                );
+              },
+            ),
           );
         },
       ),
@@ -74,13 +79,16 @@ class FeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color:  Theme.of(context).colorScheme.onSurface.withAlpha(32),
+      color: Theme.of(context).colorScheme.onSurface.withAlpha(32),
       shadowColor: Colors.transparent,
       child: InkWell(
         onLongPress: () {
-          showModalBottomSheet(context: context, builder: (context) {
-            return NewsBottomSheet(id: id, text: '$title - $text');
-          });
+          showModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return NewsBottomSheet(id: id, text: '$title - $text');
+            },
+          );
         },
         onTap: () {
           Navigator.push(
